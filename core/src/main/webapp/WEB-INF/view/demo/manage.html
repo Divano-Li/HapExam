@@ -1,0 +1,106 @@
+<#--
+ * description: 文件管理页面
+ * version: 1.0
+ * author: hua.xiao@hand-china.com
+ * #{copyright}#.
+-->
+ <style>
+.tree {
+	width: 240px;
+	height: 100%;
+	margin: 10px;
+	border: 1px solid #ccc;
+	overflow: auto;
+}
+
+.sysfile_grid {
+	margin: 0; 
+	padding: 0;
+}
+
+#sys_file_manager_layout{
+	height: 99%;
+}
+
+</style>
+
+<#include "../include/head.html">
+<body  style="padding: 3px; overflow: hidden;">
+	   
+    <!--  <div id="sys_file_manager_layout">
+          <div position="left">
+		        <div class="tree"> 
+		            <ul id="tree"></ul> 
+		        </div>
+          </div>
+          <div position="center">
+         				 <div id="sysfile_grid"></div>
+          </div>  
+      </div>  -->
+	 
+	 <div id="sysfile_grid"></div>
+    
+      <script type="text/javascript">
+
+
+                
+	$("#sysfile_grid")
+		.ligerGrid(
+				{
+					unSetValidateAttr : false,
+					columns : [
+							{
+								display : '<@spring.message "sysfile.filename"/>',
+								name : 'fileName',
+								align : 'left',
+								width : '28%'
+							},
+							{
+								display : '<@spring.message "sysfile.filesize"/>',
+								name : 'fileSize',
+								align : 'left',
+								width : '10%'
+							},
+							{
+								display : '<@spring.message "sysfile.uploaddate"/>',
+								name : 'uploadDate',
+								align : 'left',
+								width : '12%'
+							},
+							{
+								display : '<@spring.message "sysfile.filetype"/>',
+								name : 'fileType',
+								align : 'left',
+								width : '10%'
+							},
+							{
+								display : '  ',
+								align : 'left',
+								width : '5%',
+								render : function(item) {
+									var operation = '<a target="_blank" href="${base.contextPath}/sys/attach/file/detail?fileId='
+											+ item.fileId
+											+ '" ><@spring.message "hap.view"/></a> ';
+									return operation;
+
+								}
+							} ],
+					url : '${base.contextPath}/sys/attach/file/query?categoryId='+'5',//修改这里，对应数据库的categoryId
+					
+
+					enabledEdit : true,
+					width : '99%',
+					height : '99%',
+					checkbox : true,
+					isSingleCheck : true,
+					rownumbers : true,
+					pageSizeOptions : [ 10, 20 ],
+					pageSize : '20'
+				});
+	  
+  
+  
+  
+				</script> 
+</body>
+</html>

@@ -1,0 +1,270 @@
+<#--
+ * description: Fruit.html
+ * version: 1.0 
+ * author:taotao.xu@hand-china.com
+ * #{copyright}#
+ * 
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="fruitForm"></form>
+    <div id="fruitGrid" style="margin: 0; padding: 0"></div>
+    <script type="text/javascript">
+    $(function() {
+    	debugger;
+        window['fruitForm'] = $("#fruitForm").ligerForm({
+            fields : [ {
+                type : 'text',
+                label : '<@spring.message "core.fruitname"/>',
+                name : 'fruitName',
+                newline : false,
+                width: 120
+            }, {
+                type : 'text',
+                label : '<@spring.message "fruitdescription"/>',
+                name : 'fruitDescription',
+                width: 120
+            },
+            
+            { //form上的lov：弹出一个页面生成一张表
+                display : '<@spring.message "fruitCode"/>',
+                name : "fruitCode",//最终选中的值字段名
+                type : "popup",
+                newline : true,//是否换行
+                //如果不需要把lov选中的textField值放进data中那么这个属性可以不设置，如果需要放在data中就需要设置
+                textField:'fruitCode',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'fruitCode',//选中的valueField
+                    textField : 'fruitCode',//选中的textField
+                    grid : {
+                        columns : [ {
+                            display : 'fruitId',
+                            name : "fruitId",
+                            width : 120,
+                            type : "int",
+                            align : "left"
+                        }, {
+                            display : 'fruitCode',
+                            name : "fruitCode",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : "fruitName",
+                            name : "fruitName",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/ass/fruit/query' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 120,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '水果名字',
+                            name : 'fruitName',
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                }
+            }, {//form 上的select联动
+                display: "rilegou",
+                name: "fruitId",
+                type: "select",
+                textField:"fruitId",
+                options: {
+                    readonly: false,
+                    valueField: 'fruitId',
+                    textField: 'fruitId',
+                    url: '${base.contextPath}/ass/fruit/query',
+                    triggerToLoad: true,//注意
+                    onBeforeOpen: function() {
+                        //这里设置查询参数
+                        this.setParm('fruitDescription', liger.get('fruitDescription').getValue());
+                        this.triggerLoaded = false;//注意
+                    }
+                } 
+            },  
+            {//lov联动，利用水果描叙得到水果代码
+                display: '<@spring.message "fruit.fruitcode"/>',
+                name: "fruitCode",
+                type: "popup",
+                textField: 'fruitCode',
+                options:{
+                	inputWidth : 150,
+                    labelWidth : 70,
+                    textField: 'fruitCode',
+                    valueField: 'fruitId',
+                    grid : {
+                    	columns:[{
+                        display : '<@spring.message "fruit.fruitcode"/>',
+                        name : "fruitCode",
+                        newline : false,
+                        type : "text"
+                    	}],
+                        url : '${base.contextPath}/ass/fruit/query' 
+                    },
+                    onLoadData: function() {
+                         //设置参数
+                        this.setParm('fruitId', $.ligerui.get('fruitId').getValue())
+                    }
+                }
+            }
+            
+            ],
+            buttons : [ {
+                text : '<@spring.message "hap.query"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    Hap.gridQuery({
+                        form : fruitForm,
+                        grid : fruitGrid
+                    })
+                }
+            },{
+                text : '<@spring.message "hap.reset"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	fruitForm.reset();
+                }
+            } ,
+            {	
+                text : '上传',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	window.popWin=$.ligerDialog.open({
+                		load :false,
+                		width : 800,
+                		height : 500,
+                		title :'上传',
+                		url:'attach.html'
+          
+                	})
+                }
+            },
+            {	
+                text : '附件查询',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	window.popWin=$.ligerDialog.open({
+                		load :false,
+                		width : 800,
+                		height : 500,
+                		title :'附件查询',
+                		url:'manage.html'
+          
+                	})
+                }
+            }
+            ]
+        });
+
+        window['fruitGrid'] = $("#fruitGrid").ligerGrid({
+        	unSetValidateAttr : false,
+            columns : [ {
+                display : '<@spring.message "hap.fruitid"/>',
+                name : 'fruitId',
+                align : 'left',
+                width : 120,
+            },{
+                display : '<@spring.message "fruitCode"/>',
+                name : 'fruitCode',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }, 
+                validate: {
+                    required: true
+                }
+            },{
+                display : '<@spring.message "core.fruitname"/>',
+                name : 'fruitName',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display : '<@spring.message "fruitdescription"/>',
+                name : 'fruitDescription',
+                align : 'left',
+                width : 150,
+                editor : {
+                	  type : 'tl',
+                      idField:'fruitId',
+                      dto:'hbi.core.demo.dto.Fruit'
+                }
+            },
+            
+            {
+                display : '日历',
+                name : 'fruitDate',
+                align : 'left',
+                width : 150,
+                format:'yyyy-mm-dd',
+                editor : {
+                	  type : 'date',
+                	  
+                } ,validate: {
+                    required: true
+                }
+            }],
+            url : '${base.contextPath}/ass/fruit/query',
+            toolbar : {
+                items : [ 
+                          
+                          {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        fruitGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        /* Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/sys/student/delete'
+                        }) */
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/ass/fruit/submit'
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true, //是否允许编辑
+            width : '99%',
+            height : '98%',
+            checkbox : true  //复选框
+        });
+    });
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<#--
+ * description: Fruit.html
+ * version: 1.0 
+ * author:taotao.xu@hand-china.com
+ * #{copyright}#
+ * 
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="orderForm"></form>
+    <div id="orderGrid" style="margin: 0; padding: 0"></div>
+    <script type="text/javascript">
+    $(function() {
+    	debugger;
+        window['orderForm'] = $("#orderForm").ligerForm({
+            fields : [ 
+				{
+				    display : '<@spring.message "core.companyname"/>',
+				    name : "companyId",
+				    idField:"companyId",
+				    type : "popup",
+				    newline : false,
+				    textField:'companyNumber',
+				    options:{
+				        readonly:false,
+				        valueField : 'companyId',
+				        textField : 'companyName',
+				        grid : {
+				            columns : [ {
+				                display : '<@spring.message "core.companynumber"/>',
+				                name : "companyNumber",
+				                width : 120,
+				                type : "text",
+				                align : "left"
+				            }, {
+				                display : '<@spring.message "core.companyname"/>',
+				                name : "companyName",
+				                width : 120,
+				                type : "text",
+				                align : "left"
+				            }],
+				            url : '${base.contextPath}/core/company/query' 
+				        },
+				        //lov上的查询条件
+				        condition : {
+				            inputWidth : 120,
+				            labelWidth : 170,
+				            fields : [ {
+				                display : '<@spring.message "core.companynumber"/>',
+				                name : 'companyNumber',
+				                newline : true,
+				                type : "text"
+				            } ,
+				            {
+				                display :  '<@spring.message "core.companyname"/>',
+				                name : 'companyName',
+				                newline : true,
+				                type : "text"
+				            }
+				            ]
+				        }
+				    }
+				    },
+				    //客户名称
+		               {
+		                display: '<@spring.message "core.customername"/>',
+		                name: "customerName",
+		                type: "popup",
+		                newline : false,
+		                textField: 'customerName',
+		                options:{
+		                	inputWidth : 150,
+		                    labelWidth : 70,
+		                    textField: 'customerName',
+		                    valueField: 'customerName',
+		                    grid : {
+		                    	columns:[{
+		                        display : '<@spring.message "core.customerid"/>',
+		                        name : "customerId",
+		                        newline : false,
+		                        type : "text"
+		                    	},
+		                    	{
+		                            display : '<@spring.message "core.customername"/>',
+		                            name : "customerName",
+		                            newline : false,
+		                            type : "text"
+		                        	}],
+		                            onLoadData: function() {
+		                               this.setParm('companyId', $.ligerui.get('companyId').getValue())
+		                           },
+		                        url : '${base.contextPath}/core/customer/query' 
+		                    }
+		                }
+		            },
+		            
+		        	//销售订单号
+		            {
+		                type : 'text',
+		                label : '<@spring.message "core.ordernumber"/>',
+		                name : 'orderNumber',
+		                newline : false,
+		                width: 120
+		            },
+		            
+	            	
+		            {
+		                display : '<@spring.message "core.itemdescription"/>',
+		                name : 'itemId',
+		                type : "popup",
+		                newline : true,
+		                textField:'itemDescription',
+		                options:{
+		                    readonly:false,
+		                    valueField : 'itemId',
+		                    textField : 'itemDescription',
+		                    grid : {
+		                        columns : [ {
+		                            display : '<@spring.message "core.itemcode"/>',
+		                            name : "itemCode",
+		                            width : 120,
+		                            type : "text",
+		                            align : "left"
+		                        }, {
+		                            display :'<@spring.message "core.itemdescription"/>',
+		                            name : 'itemDescription',
+		                            width : 120,
+		                            type : "text",
+		                            align : "left"
+		                        }],
+		                        url : '${base.contextPath}/core/item/query' 
+		                    },
+		                    condition : {
+		                        inputWidth : 120,
+		                        labelWidth : 70,
+		                        fields : [ {
+		                            display :  '<@spring.message "core.itemid"/>',
+		                            name : 'itemId',
+		                            newline : true,
+		                            type : "text"
+		                        }]
+		                    }
+		              	}
+					}, 
+					{
+		                type : 'combobox',
+		                label : '<@spring.message "core.orderstatus"/>',
+		                name : 'orderStatus',
+		                options : {
+		                    valueField : 'ID',
+		                    textField : 'text',
+		                    data : [ {
+		                        ID : 'new',
+		                        text : 'new'
+		                    }, {
+		                        ID : 'submited',
+		                        text : 'submited'
+		                    },
+		                    {
+		                        ID : 'approved',
+		                        text : 'approved'
+		                    } ,{
+		                        ID : 'rejected',
+		                        text : 'rejected'
+		                    } ]
+		                },
+		                newline : false
+		            }
+
+          		 ],
+		           buttons : [ {
+		               text : '<@spring.message "hap.query"/>',
+		               disabled : false,
+		               width : 60,
+		               click : function() {
+		                   Hap.gridQuery({
+		                       form : orderForm,
+		                       grid : orderGrid
+		                   })
+		               }
+		           },
+		           {
+		               text : '<@spring.message "hap.reset"/>',
+		               disabled : false,
+		               width : 60,
+		               click : function() {
+		            	   orderForm.reset();
+		               }
+		           } 
+		           ]
+		        });
+        window['orderGrid'] = $("#orderGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+            	//订单号
+                display : '<@spring.message "core.ordernumber"/>',
+                name : 'orderNumber',
+                align : 'left',
+                width : 120,
+                
+            },
+            {
+            	//公司名
+                display : '<@spring.message "core.companyname"/>',
+                name : 'attribute1',
+                align : 'left',
+                width : 120, 
+            },
+            {
+            	//顾客名
+                display : '<@spring.message "core.customername"/>',
+                name : 'attribute2',
+                align : 'left',
+                width : 120,
+            },
+            {
+            	//订单日期
+                display : '<@spring.message "core.orderdate"/>',
+                name : 'orderDate',
+                align : 'left',
+                width : 150,
+                //format:'yyyy-mm-dd'
+            },
+            {
+            	//订单状态
+                display : '<@spring.message "core.orderstatus"/>',
+                name : 'orderStatus',
+                align : 'left',
+                width : 150,
+
+            },
+            {
+            	//金额
+                display : '<@spring.message "core.sum"/>',
+                name : 'attribute3',
+                align : 'left',
+                width : 150,
+
+            }
+            ],
+            url : '${base.contextPath}/core/order/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        //fruitGrid.addRow({})
+                        window.popWin=$.ligerDialog.open({
+                        load :false,
+                        width : 1000,
+                        height : 600,
+                        title :'<@spring.message "core.item"/>',
+                        url:'item.html'
+          
+                    })
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                } ]
+            },
+            enabledEdit : false,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+    });
+
+    </script>
+</body>
+</html>

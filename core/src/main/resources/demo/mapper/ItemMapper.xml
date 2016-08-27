@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hbi.core.item.mapper.ItemMapper">
+	<resultMap id="BaseResultMap" type="hbi.core.demo.dto.Item"
+		extends="com.hand.hap.mapper.StdMapper.STD">
+		<result column="INVENTORY_ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+		<result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+		<result column="ITEM_UOM" property="itemUom" jdbcType="VARCHAR" />
+		<result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR" />
+		<result column="ORDER_FLAG" property="orderFlag" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectByItem" parameterType="hbi.core.demo.dto.Item"
+		resultMap="BaseResultMap">
+		SELECT INVENTORY_ITEM_ID,ITEM_CODE,ITEM_UOM,ITEM_DESCRIPTION,ORDER_FLAG from hap_inv_inventory_items
+		<where>
+			<if test="itemId != null">
+				and INVENTORY_ITEM_ID = #{itemId,jdbcType=DECIMAL}
+			</if>
+			<if test="itemCode != null">
+				AND ITEM_CODE like #{itemCode,jdbcType=VARCHAR}
+			</if>
+			<if test="itemUom != null">
+				AND ITEM_UOM like #{itemUom,jdbcType=VARCHAR}
+			</if>
+			<if test="itemDescription != null">
+				AND ITEM_DESCRIPTION like #{itemDescription,jdbcType=VARCHAR}
+			</if>
+			<if test="orderFlag != null">
+				AND ORDER_FLAG like #{orderFlag,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

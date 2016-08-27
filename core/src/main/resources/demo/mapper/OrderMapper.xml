@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hbi.core.order.mapper.OrderMapper">
+	<resultMap id="BaseResultMap" type="hbi.core.demo.dto.OrderHeader"
+		extends="com.hand.hap.mapper.StdMapper.STD">
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="COMPANY_NAME" property="attribute1" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_NAME" property="attribute2" jdbcType="VARCHAR" />
+		<result column="ORDER_DATE" property="orderDate" jdbcType="DATE" />
+		<result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="SALARY" property="attribute3" jdbcType="VARCHAR" />
+
+<!-- 		<result column="companyId" property="attribute4" jdbcType="DECIMAL" />
+		<result column="customerName" property="attribute5" jdbcType="VARCHAR" />
+		<result column="itemId" property="attribute6" jdbcType="DECIMAL" /> -->
+		
+	</resultMap>
+
+	<select id="selectByOrder" parameterType="hbi.core.demo.dto.OrderHeader"
+		resultMap="BaseResultMap">
+		SELECT 
+		h.ORDER_NUMBER,o.COMPANY_NAME,u.CUSTOMER_NAME,h.ORDER_DATE,h.ORDER_STATUS,l.ORDERD_QUANTITY*l.UNIT_SELLING_PRICE
+		SALARY FROM
+		hap_om_order_headers h,hap_ar_customers u,hap_org_companys
+		o, hap_om_order_lines
+		l,hap_inv_inventory_items i
+		<where>
+			h.customer_id=u.customer_id AND
+			o.COMPANY_ID=h.COMPANY_ID AND
+			l.COMPANY_ID=o.COMPANY_ID AND
+			i.INVENTORY_ITEM_ID=l.INVENTORY_ITEM_ID
+			<if test="companyId != null">
+				and o.company_id = #{companyId,jdbcType=DECIMAL}
+			</if>
+			<if test="customerName != null">
+				AND u.customer_name like #{customerName,jdbcType=VARCHAR}
+			</if>
+			<if test="orderNumber != null">
+				AND h.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+			</if>
+			<if test="itemId != null">
+				AND i.INVENTORY_ITEM_ID =
+				#{itemId,jdbcType=DECIMAL}
+			</if>
+			<if test="orderStatus != null">
+				AND h.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
+			</if> 
+		</where>
+	</select>
+</mapper>
